@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI YouTube Thumbnail Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Thumbnail <span>Generator</span></h1>
+            <p>Enter a topic and let AI design the perfect high-CTR thumbnail for your next video.</p>
+        </header>
+
+        <main>
+            <div class="input-section glass-panel">
+                <form id="generate-form">
+                    <div class="input-group">
+                        <input type="text" id="topic-input" placeholder="E.g., Why Python is the best programming language..." required>
+                        <button type="submit" id="generate-btn">
+                            <span class="btn-text">Generate Thumbnail</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="result-section" class="result-section hidden">
+                <div class="glass-panel image-container">
+                    <img id="result-image" src="" alt="Generated Thumbnail">
+                    <div class="image-overlay">
+                        <div class="rating-badge">
+                            <span class="star">★</span>
+                            <span id="final-rating">9</span>/10
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-panel info-container">
+                    <div class="info-group">
+                        <h3>AI Prompt Used:</h3>
+                        <p id="prompt-text"></p>
+                    </div>
+                    <div class="info-group">
+                        <h3>Final Critique:</h3>
+                        <p id="critique-text"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>
