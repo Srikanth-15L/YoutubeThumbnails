@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-from youtube_thumbnailer.graph import build_graph
+from graph import build_graph
 
 app = FastAPI()
 

@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, END, START
 
-from .state import Thumbnail
-from .nodes import (
+from state import Thumbnail
+from nodes import (
     node_generator, node_prompt_writer,
     node_search, critic_node, should_continue, node_saver
 )

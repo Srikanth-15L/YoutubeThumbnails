@@ -1,6 +1,6 @@
-from .tools import web_search
-from .state import Thumbnail
-from .prompts import PROMPT_WRITER_SYSTEM, PROMPT_WRITER_USER, REVISION_HINT, CRITIC_SYSTEM
+from tools import web_search
+from state import Thumbnail
+from prompts import PROMPT_WRITER_SYSTEM, PROMPT_WRITER_USER, REVISION_HINT, CRITIC_SYSTEM
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 load_dotenv()
