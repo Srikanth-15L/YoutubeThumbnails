@@ -136,8 +136,17 @@ def node_saver(state: Thumbnail) -> dict:
             f"- Image: ![Iteration {entry['iteration']}]({Path(entry['image_path']).name})",
             "",
         ])
-    save_path = outputs / "save.md"
+    run_dir = Path(state.get("run_dir", outputs))
+    save_path = run_dir / "report.md"
     save_path.write_text("\n".join(lines), encoding="utf-8")
+    
+    if history:
+        import shutil
+        final_image_path = Path(history[-1]["image_path"])
+        final_png = run_dir / "final.png"
+        if final_image_path.exists():
+            shutil.copy2(final_image_path, final_png)
+
     return {
         "save_path": str(save_path),
     }

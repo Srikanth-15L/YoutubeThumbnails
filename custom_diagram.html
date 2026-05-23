@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Thumbnailer Architecture</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'arial, sans-serif',
+                lineColor: '#333'
+            },
+            flowchart: {
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-color: white;
+            font-family: Arial, sans-serif;
+        }
+        .mermaid {
+            width: 100%;
+            max-width: 1000px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mermaid">
+flowchart TD
+    classDef startNode fill:#e0e0e0,stroke:#333,stroke-width:2px;
+    classDef endNode fill:#e0e0e0,stroke:#333,stroke-width:2px;
+    
+    classDef blueNode fill:#cce5ff,stroke:#0066cc,stroke-width:2px,rx:10px,ry:10px;
+    classDef blueState fill:#ffffff,stroke:#0066cc,stroke-width:2px,rx:10px,ry:10px,text-align:left;
+    
+    classDef yellowNode fill:#fff2cc,stroke:#ffb300,stroke-width:2px,rx:10px,ry:10px;
+    classDef yellowState fill:#ffffff,stroke:#ffb300,stroke-width:2px,rx:10px,ry:10px,text-align:left;
+    
+    classDef pinkNode fill:#f8cbad,stroke:#c00000,stroke-width:2px,rx:10px,ry:10px;
+    classDef pinkState fill:#ffffff,stroke:#c00000,stroke-width:2px,rx:10px,ry:10px,text-align:left;
+    
+    classDef greenNode fill:#e2efda,stroke:#548235,stroke-width:2px,rx:10px,ry:10px;
+    classDef greenState fill:#ffffff,stroke:#548235,stroke-width:2px,rx:10px,ry:10px,text-align:left;
+
+    classDef purpleNode fill:#e6ccff,stroke:#9900ff,stroke-width:2px,rx:10px,ry:10px;
+    classDef purpleState fill:#ffffff,stroke:#9900ff,stroke-width:2px,rx:10px,ry:10px,text-align:left;
+
+    START([<b>START</b>]):::startNode
+
+    subgraph Left [ ]
+        direction TB
+        web_search["<b>🔍 web_search</b><br/><br/>Tavily search on the topic"]:::blueNode
+        prompt_writer["<b>✍️ prompt_writer</b><br/><br/>Write a DALL-E prompt<br/>(use critique on loops)"]:::yellowNode
+        generator["<b>🎨 generator</b><br/><br/>Call DALL-E 3<br/>Save the PNG to outputs/"]:::pinkNode
+        critic["<b>🧐 critic</b><br/><br/>Vision LLM rates the image<br/>Returns rating + critique"]:::greenNode
+        saver["<b>💾 saver</b><br/><br/>Saver produces final.png + report.md<br/>showing every iteration"]:::purpleNode
+    end
+
+    subgraph Right [ ]
+        direction TB
+        state_web["<b>State after web_search</b><br/>+ search_summary +bullet list"]:::blueState
+        state_prompt["<b>State after prompt_writer</b><br/>▶ current_prompt = new DALL-E prompt"]:::yellowState
+        state_gen["<b>State after generator</b><br/>▶ image_path = outputs/iter_N.png<br/>▶ iteration = iteration + 1"]:::pinkState
+        state_critic["<b>State after critic</b><br/>▶ rating = 1-10 (Pydantic)<br/>▶ critique = actionable feedback<br/>+ history += this iteration"]:::greenState
+        state_saver["<b>State after saver</b><br/>▶ Final outputs documented"]:::purpleState
+    end
+    
+    END([<b>END</b>]):::endNode
+
+    START --> web_search
+    web_search --> prompt_writer
+    prompt_writer --> generator
+    generator --> critic
+    
+    %% Conditional edges from critic
+    critic -- "<span style='color:red; font-weight:bold;'>NO rating < target<br/>(loop with critique)</span>" --> prompt_writer
+    critic -- "<span style='color:green; font-weight:bold;'>YES rating >= target<br/>(or max loops)</span>" --> saver
+    
+    saver --> END
+
+    web_search -.- state_web
+    prompt_writer -.- state_prompt
+    generator -.- state_gen
+    critic -.- state_critic
+    saver -.- state_saver
+
+    %% Hide subgraph borders
+    style Left fill:none,stroke:none
+    style Right fill:none,stroke:none
+    
+    %% Create invisible links to align states horizontally with their nodes
+    web_search ~~~ state_web
+    prompt_writer ~~~ state_prompt
+    generator ~~~ state_gen
+    critic ~~~ state_critic
+    saver ~~~ state_saver
+</div>
+
+</body>
+</html>

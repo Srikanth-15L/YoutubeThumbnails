@@ -1,10 +1,11 @@
 from pathlib import Path
 from datetime import datetime
 
-from youtube_thumbnailer.graph import build_graph
+from graph import build_graph
 
 
 
+#for demo purpose testing with input directly
 
 
 
